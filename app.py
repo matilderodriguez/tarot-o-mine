@@ -116,6 +116,23 @@ def export_session(s):
 import streamlit as st
 st.set_page_config(page_title='Tarot o’ Mine',page_icon='✦',layout='centered')
 st.markdown('''<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wdth,wght@8..144,75..100,400..800&display=swap');
+/* A readable, condensed serif to complement the original Corvinus logo. */
+:root {--tarot-font:'Roboto Serif',Georgia,'Times New Roman',serif}
+.stApp {font-family:var(--tarot-font)!important}
+.stApp :is(h1,h2,h3,h4,h5,h6,p,label,button,input,textarea,summary),
+.stApp [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stMetricValue"],
+.stApp [data-testid="stMetricLabel"],
+.stApp [data-baseweb="select"] [role="combobox"],
+.stApp .tarot-tile {font-family:var(--tarot-font)!important}
+.stApp :is(h1,h2,h3,h4) {font-weight:750!important;font-stretch:75%;line-height:1.2;letter-spacing:.005em}
+.stApp :is(p,label,input,textarea) {font-stretch:100%;line-height:1.5}
+.stApp [data-testid="stCaptionContainer"] p {color:#D1C4B6!important;font-size:.88rem;line-height:1.55}
+.stApp button p {font-stretch:85%;line-height:1.3}
+.stApp .tarot-title {font-stretch:85%;font-weight:650}
+.stApp .tarot-role,.stApp .tarot-note {font-stretch:100%}
+
 .stApp {background:#100D13;color:#FFF3DB}
 [data-testid="stHeader"] {background:#100D13}
 .block-container {max-width:780px;padding-top:2rem}
@@ -143,20 +160,22 @@ h1,h2,h3 {color:#F5D32F!important}
     border:2px solid #A92D36!important;
     border-radius:9px!important;
     box-shadow:inset 0 0 0 1px #100D13,0 2px 0 #100D13;
-    min-height:48px;
+    min-height:52px;
+    padding:.65rem .85rem!important;
 }
 .stApp button[data-testid="stBaseButton-primary"] *,
 .stApp button[kind="primary"] *,
 .stApp button[kind="primaryFormSubmit"] * {
     color:#100D13!important;
-    font-weight:800!important;
-    text-shadow:0.65px 0.65px 0 #BD4934;
+    font-weight:700!important;
+    text-shadow:none!important;
+    -webkit-text-stroke:0!important;
 }
 .stApp button[data-testid="stBaseButton-primary"]:hover,
 .stApp button[kind="primary"]:hover,
 .stApp button[kind="primaryFormSubmit"]:hover {
     background:#FFE46A!important;
-    border-color:#F5D32F!important;
+    border-color:#A92D36!important;
 }
 .stApp button[data-testid="stBaseButton-primary"]:focus-visible,
 .stApp button[kind="primary"]:focus-visible,
@@ -171,6 +190,20 @@ h1,h2,h3 {color:#F5D32F!important}
     box-shadow:none!important;
 }
 
+
+.stApp button[data-testid="stBaseButton-primary"] p,
+.stApp button[kind="primary"] p,
+.stApp button[kind="primaryFormSubmit"] p {
+    font-size:1.05rem!important;
+    letter-spacing:.005em;
+    text-shadow:none!important;
+}
+@media(max-width:600px) {
+    .stApp h2,.stApp h3 {font-size:clamp(1.35rem,5.9vw,1.8rem)!important}
+    .stApp button p {font-size:1rem!important}
+    .stApp .tarot-title {font-size:.95rem}
+    .stApp .tarot-role,.stApp .tarot-note {font-size:.78rem}
+}
 </style>''',unsafe_allow_html=True)
 import base64
 # Approved wordmark embedded as a PNG, not a font file.
