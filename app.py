@@ -133,6 +133,44 @@ h1,h2,h3 {color:#F5D32F!important}
 .tarot-note {color:#D9C7E5;font-size:.78rem;line-height:1.4}
 .tarot-back {width:100%;aspect-ratio:.58;background:repeating-linear-gradient(45deg,#38204F 0px,#38204F 12px,#48265E 12px,#48265E 24px);border:2px solid #F5D32F;border-radius:8px;display:grid;place-items:center;box-shadow:inset 0 0 0 6px #38204F,inset 0 0 0 8px #A92D36,0 5px 16px #0008;color:#F5D32F;font-size:3rem;box-sizing:border-box}
 @media(min-width:650px){.tarot-spread{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}}
+
+/* Appetite-inspired gold buttons: dark lettering, black edging and red accents. */
+.stApp button[data-testid="stBaseButton-primary"],
+.stApp button[kind="primary"],
+.stApp button[kind="primaryFormSubmit"] {
+    background:linear-gradient(180deg,#FFE46A 0%,#F5D32F 58%,#E9AE24 100%)!important;
+    color:#100D13!important;
+    border:2px solid #A92D36!important;
+    border-radius:9px!important;
+    box-shadow:inset 0 0 0 1px #100D13,0 2px 0 #100D13;
+    min-height:48px;
+}
+.stApp button[data-testid="stBaseButton-primary"] *,
+.stApp button[kind="primary"] *,
+.stApp button[kind="primaryFormSubmit"] * {
+    color:#100D13!important;
+    font-weight:800!important;
+    text-shadow:0.65px 0.65px 0 #BD4934;
+}
+.stApp button[data-testid="stBaseButton-primary"]:hover,
+.stApp button[kind="primary"]:hover,
+.stApp button[kind="primaryFormSubmit"]:hover {
+    background:#FFE46A!important;
+    border-color:#F5D32F!important;
+}
+.stApp button[data-testid="stBaseButton-primary"]:focus-visible,
+.stApp button[kind="primary"]:focus-visible,
+.stApp button[kind="primaryFormSubmit"]:focus-visible {
+    outline:2px solid #FFF3DB!important;
+    outline-offset:3px;
+}
+.stApp button[data-testid="stBaseButton-primary"]:disabled,
+.stApp button[kind="primary"]:disabled,
+.stApp button[kind="primaryFormSubmit"]:disabled {
+    opacity:.45!important;
+    box-shadow:none!important;
+}
+
 </style>''',unsafe_allow_html=True)
 import base64
 # Approved wordmark embedded as a PNG, not a font file.
