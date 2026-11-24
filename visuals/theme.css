@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root {
+    --ink: #100d15;
+    --cream: #f4e9d7;
+    --gold: #e7c779;
+    --muted: #cbbdd4;
+    --outline: #766342;
+    --body: 'DM Sans', system-ui, sans-serif;
+    --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+}
+.stApp {
+    background: radial-gradient(ellipse at 50% 0, #26182f 0, var(--ink) 38rem);
+    color: var(--cream);
+    font-family: var(--body);
+}
+[data-testid="stHeader"] { background: transparent; }
+.block-container { max-width: 52rem; padding-top: 2.75rem; }
+.stApp :is(h1, h2, h3) {
+    color: var(--gold);
+    font-family: var(--display);
+    font-weight: 700;
+    letter-spacing: .025em;
+    line-height: 1.1;
+}
+.stApp h3 { font-size: clamp(1.8rem, 6vw, 2.45rem); }
+.stApp :is(p, label, input, textarea, button, summary) { font-family: var(--body); }
+.stApp :is(input, textarea) { font-size: 1rem; }
+.stApp [data-testid="stCaptionContainer"] { opacity: 1; }
+.stApp [data-testid="stCaptionContainer"] p {
+    color: var(--muted) !important;
+    font-size: .875rem;
+    line-height: 1.5;
+}
+.stApp :is([data-testid="stTextArea"], [data-testid="stTextInput"]) :is(input, textarea)::placeholder {
+    color: var(--muted);
+    opacity: 1;
+}
+.stApp [data-testid="stImage"] img { object-fit: contain; }
+.st-key-tarot_brand [data-testid="stElementContainer"]:has([data-testid="stImage"]) {
+    align-self: center;
+    max-width: 100%;
+}
+.st-key-tarot_brand [data-testid="stCaptionContainer"] { text-align: center; }
+
+.stApp :is([data-testid="stButton"], [data-testid="stDownloadButton"], [data-testid="stFormSubmitButton"]) button {
+    min-height: 2.75rem;
+    border: 1px solid var(--outline);
+    border-radius: 4px;
+    color: var(--cream);
+    background: #201729;
+}
+.stApp :is([data-testid="stButton"], [data-testid="stDownloadButton"], [data-testid="stFormSubmitButton"]) button:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+.stApp button:is([kind="primary"], [kind="primaryFormSubmit"], [data-testid="stBaseButton-primary"]):not(:disabled) {
+    color: #1c1420;
+    background: #dcc080;
+}
+.stApp button:is([kind="primary"], [kind="primaryFormSubmit"], [data-testid="stBaseButton-primary"]):hover:not(:disabled) {
+    color: #1c1420;
+    background: #f0d694;
+}
+.stApp button:focus-visible {
+    outline: 2px solid #f6d798;
+    outline-offset: 3px;
+}
+
+.st-key-quick_major_art { --quick-art: var(--longhair); --panel: #352044; }
+.st-key-quick_full_art { --quick-art: var(--bandana); --panel: #30203f; }
+.st-key-quick_five_art { --quick-art: var(--tophat); --panel: #3a2346; }
+.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) [data-testid="stButton"] button {
+    justify-content: flex-start;
+    text-align: left;
+    min-height: 6.5rem;
+    padding: .9rem 1rem .9rem 7.2rem;
+    color: var(--cream);
+    background: var(--quick-art) left .35rem center / 6.25rem auto no-repeat,
+        repeating-linear-gradient(117deg, transparent 0 3px, #f2d08e07 3px 4px),
+        linear-gradient(105deg, #120e18, var(--panel));
+    border: 1px solid var(--outline);
+}
+.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) [data-testid="stButton"] button:hover {
+    color: #ffdfa0;
+    background: var(--quick-art) left .35rem center / 6.25rem auto no-repeat,
+        repeating-linear-gradient(117deg, transparent 0 3px, #f2d08e0b 3px 4px),
+        linear-gradient(105deg, #1b1422, var(--panel));
+    border-color: var(--gold);
+}
+.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) button > span {
+    justify-content: flex-start;
+}
+.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) button p {
+    font: 700 clamp(1.25rem, 4.8vw, 1.75rem)/1.15 var(--display);
+    letter-spacing: .025em;
+    overflow-wrap: anywhere;
+    text-align: left;
+}
+
+.tarot-spread { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; padding: 8px 0 14px; align-items: start; }
+.tarot-tile { min-width: 0; text-align: center; margin: 0 auto; width: 100%; max-width: 205px; overflow-wrap: anywhere; }
+.tarot-role { color: var(--muted); font-size: .875rem; margin-bottom: 7px; }
+.tarot-face, .tarot-back { width: 100%; aspect-ratio: .58; border: 1px solid var(--outline); border-radius: 4px; box-shadow: 0 5px 16px #0008; box-sizing: border-box; }
+.tarot-face { display: block; object-fit: contain; background: #30203f; }
+.tarot-face.reversed { transform: rotate(180deg); }
+.tarot-title { color: var(--gold); font-size: 1rem; font-weight: 700; margin: 8px 0 2px; line-height: 1.3; }
+.tarot-note { color: var(--muted); font-size: .875rem; line-height: 1.4; }
+.tarot-back { display: grid; place-items: center; color: var(--gold); font-size: 3rem; background: repeating-linear-gradient(45deg, #2e1b3a 0 8px, #362143 8px 16px); }
+@media (min-width: 650px) {
+    .tarot-spread { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+}
+@media (max-width: 600px) {
+    .block-container { padding-inline: 1rem; }
+}
