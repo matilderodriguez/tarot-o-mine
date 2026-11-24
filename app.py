@@ -10,7 +10,6 @@ MINORS = [f'{r} of {s}' for s in ('Wands','Cups','Swords','Pentacles') for r in 
 DECKS = {'Full Deck':MAJORS+MINORS,'Major Arcana':MAJORS,'Minor Arcana':MINORS}
 
 def new_session(question, kind, count, reversals=False, random_pile=True):
-    if not question.strip(): raise ValueError('Enter a question first.')
     cards = DECKS[kind].copy()
     for i in range(len(cards)-1,0,-1):
         j=secrets.randbelow(i+1)
@@ -38,7 +37,7 @@ def add_other_piles(s):
     s['used_piles'].extend(unused); s['log'].append(dict(action='add_piles',piles=unused))
 
 def add_question(s,question,count,parent=None,initial=False):
-    if s['closed'] or not question.strip() or count<1: raise ValueError('Enter a valid question.')
+    if s['closed'] or count<1: raise ValueError('Enter a valid card count.')
     if not initial and (s['selected_pile'] is None or pending(s) or count>len(s['remaining'])): raise ValueError('Finish pending cards and check the available cards.')
     s['questions'].append(dict(id=len(s['questions'])+1,question=question.strip(),count=count,parent=parent,cards=[]))
 
@@ -63,10 +62,53 @@ def clarify(s,qid,pos,question=''):
     s['log'].append(dict(action='clarifier',question_id=qid,position=pos,**c))
     return c
 
+def secure_shuffle(cards):
+    cards = cards[:]
+    for i in range(len(cards)-1, 0, -1):
+        j = secrets.randbelow(i+1)
+        cards[i], cards[j] = cards[j], cards[i]
+    return cards
+
+
+def quick_reading(kind, count, clarifiers):
+    """The supplied script's sequential cut and second shuffle, with a variable spread."""
+    if count < 1 or clarifiers < 0:
+        raise ValueError('Invalid spread size.')
+    cards = secure_shuffle(DECKS[kind])
+    n = len(cards)
+    m = max(6, count * (1 + clarifiers))
+    if n < 3*m:
+        raise ValueError('Not enough cards for three eligible piles.')
+    cut1 = secrets.randbelow(n - 3*m + 1) + m
+    cut2 = secrets.randbelow(n - cut1 - 2*m + 1) + m
+    piles = [cards[:cut1], cards[cut1:cut1+cut2], cards[cut1+cut2:]]
+    s = dict(id=str(uuid4()), created_utc=datetime.now(timezone.utc).isoformat(),
+             deck=kind, reversals=False, piles=piles, pile_sizes=list(map(len,piles)),
+             selected_pile=None, used_piles=[], remaining=[], questions=[], log=[],
+             closed=False, mode='quick', clarifiers_per_card=clarifiers)
+    add_question(s, '', count, initial=True)
+    select_pile(s, secrets.randbelow(3))
+    # The original script reshuffles the selected pile and pops from its end.
+    # The existing draw() pops from the front, so reverse to match that order.
+    s['remaining'] = secure_shuffle(s['remaining'])[::-1]
+    s['log'].append(dict(action='reshuffle_selected_pile', pile=s['selected_pile']))
+    for pos in range(1, count+1):
+        draw_main(s, 1)
+        for _ in range(clarifiers):
+            clarify(s, 1, pos)
+    return s
+
+
+def question_title(q):
+    return q['question'].strip() or 'Untitled reading'
+
+
 def export_session(s):
     result=deepcopy({k:v for k,v in s.items() if k not in ('piles','remaining')})
     result['cards_remaining']=len(s['remaining'])
     result['engine']='Python secrets + Fisher-Yates; draws without replacement'
+    if s.get('mode') == 'quick':
+        result['engine'] += '; sequential three-pile cut; selected pile reshuffled'
     result['reading_instructions']='Interpret only the drawn cards. Read main cards and their clarifiers together, integrate related questions, consider Rider-Waite imagery, symbolism and tensions. Do not invent cards or claim to know private thoughts or predict actual outcomes.'
     return result
 
@@ -146,10 +188,36 @@ def show_backs(count, start):
     if tiles:
         st.markdown('<div class="tarot-spread">' + ''.join(tiles) + '</div>', unsafe_allow_html=True)
 
+def start_quick(kind, count, clarifiers):
+    try:
+        fresh = quick_reading(kind, count, clarifiers)
+    except ValueError as e:
+        st.error(str(e))
+        return
+    previous = st.session_state.reading
+    if previous is not None and not previous['closed'] and any(q['cards'] for q in previous['questions']):
+        previous['closed'] = True
+        st.session_state.history.append(export_session(previous))
+    st.session_state.reading = fresh
+    st.session_state[f"reading_view_{fresh['id']}"] = True
+    st.rerun()
+
+
+st.subheader('✦ Quick Reading')
+st.caption('One tap · No question required · Upright cards')
+if st.button('Major Arcana · 3 + 3', key='quick_major', type='primary', use_container_width=True):
+    start_quick('Major Arcana', 3, 1)
+if st.button('Full Deck · 3 + 3', key='quick_full', type='primary', use_container_width=True):
+    start_quick('Full Deck', 3, 1)
+if st.button('Full Deck · 5 + 10', key='quick_five', type='primary', use_container_width=True):
+    start_quick('Full Deck', 5, 2)
+st.caption('Each tap starts a fresh deck. Previous revealed readings are saved in this visit’s history.')
+st.divider()
+
 s=st.session_state.reading
 if s is None:
-    st.subheader('New reading')
-    question=st.text_area('Your question',placeholder='What would you like to explore?')
+    st.subheader('Interactive Reading')
+    question=st.text_area('Your question (optional)',placeholder='What would you like to explore?')
     kind=st.radio('Deck',list(DECKS),horizontal=True)
     count=st.slider('Main cards',1,min(10,len(DECKS[kind])//3),3)
     rev=st.checkbox('Include reversed cards')
@@ -163,9 +231,10 @@ elif s['selected_pile'] is None:
     for i,n in enumerate(s['pile_sizes']):
         if st.button(f'▥ Pile {i+1} · {n} cards',key=f'pile{i}',use_container_width=True): action(select_pile,s,i)
 elif st.toggle('Reading view · Cards only', key=f"reading_view_{s['id']}"):
+    st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
     for q in s['questions']:
         st.divider()
-        st.subheader(f"{q['id']}. {q['question']}")
+        st.subheader(f"{q['id']}. {question_title(q)}")
         if q['parent']: st.caption(f"Follow-up to question {q['parent']}")
         for pos,c in enumerate(q['cards'], 1):
             with st.container(border=True):
@@ -179,7 +248,7 @@ else:
             st.caption('Add unused piles without reshuffling or repeating cards.')
             if st.button('Add remaining piles'): action(add_other_piles,s)
     for q in s['questions']:
-        qid=q['id']; st.divider(); st.subheader(f"{qid}. {q['question']}")
+        qid=q['id']; st.divider(); st.subheader(f"{qid}. {question_title(q)}")
         if q['parent']: st.caption(f"Follow-up to question {q['parent']}")
         left=q['count']-len(q['cards'])
         if left and not s['closed']:
@@ -198,11 +267,19 @@ else:
     if not s['closed'] and s['remaining'] and not pending(s):
         with st.expander('+ Ask a follow-up question'):
             with st.form('followup',clear_on_submit=True):
-                parent=st.selectbox('Related to',[q['id'] for q in s['questions']],format_func=lambda i:f"{i}. {s['questions'][i-1]['question']}")
-                question=st.text_area('Follow-up question')
+                parent=st.selectbox('Related to',[q['id'] for q in s['questions']],format_func=lambda i:f"{i}. {question_title(s['questions'][i-1])}")
+                question=st.text_area('Follow-up question (optional)')
                 count=st.number_input('Main cards',1,min(10,len(s['remaining'])),min(3,len(s['remaining'])),step=1)
                 if st.form_submit_button('Add question'): action(add_question,s,question,count,parent)
+if s is not None and s['selected_pile'] is not None:
     st.divider()
+    if not s['closed']:
+        with st.expander('Add a question or topic (optional)'):
+            with st.form(f"topic_{s['id']}"):
+                topic = st.text_input('Your question', value=s['questions'][0]['question'])
+                if st.form_submit_button('Save topic'):
+                    s['questions'][0]['question'] = topic.strip()
+                    st.rerun()
     data=json.dumps(export_session(s),indent=2,ensure_ascii=False)
     st.download_button('Download session JSON',data,file_name=f"tarot_{s['id'][:8]}.json",mime='application/json',use_container_width=True)
     with st.expander('Copy session for ChatGPT'):
@@ -216,7 +293,7 @@ else:
 if st.session_state.history:
     with st.expander('History for this visit'):
         for h in reversed(st.session_state.history):
-            st.download_button(h['questions'][0]['question'],json.dumps(h,indent=2,ensure_ascii=False),file_name=f"tarot_{h['id'][:8]}.json",mime='application/json',key=f"hist{h['id']}")
+            st.download_button(question_title(h['questions'][0]) + ' · ' + h['created_utc'][:16].replace('T',' '),json.dumps(h,indent=2,ensure_ascii=False),file_name=f"tarot_{h['id'][:8]}.json",mime='application/json',key=f"hist{h['id']}")
 st.caption('Python secrets · Fisher–Yates · No AI in card selection. Readings are symbolic. Session history is temporary; export before leaving.')
 
 st.caption("Card artwork: Pamela Colman Smith, Rider–Waite–Smith (1909–1910), [Wikimedia Commons · historical scans](https://commons.wikimedia.org/wiki/Category:Rider-Waite-Smith_tarot_deck_(TaionWC)). Tap a card to view its original scan.")
