@@ -100,7 +100,7 @@ def quick_reading(kind, count, clarifiers):
 
 
 def question_title(q):
-    return q['question'].strip() or 'Untitled reading'
+    return q['question'].strip()
 
 
 def export_session(s):
@@ -237,7 +237,6 @@ def start_quick(kind, count, clarifiers):
         previous['closed'] = True
         st.session_state.history.append(export_session(previous))
     st.session_state.reading = fresh
-    st.session_state[f"reading_view_{fresh['id']}"] = True
     st.rerun()
 
 
@@ -268,11 +267,18 @@ elif s['selected_pile'] is None:
     st.subheader('Choose a pile')
     for i,n in enumerate(s['pile_sizes']):
         if st.button(f'▥ Pile {i+1} · {n} cards',key=f'pile{i}',use_container_width=True): action(select_pile,s,i)
+elif s.get('mode') == 'quick':
+    st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
+    for q in s['questions']:
+        for pos,c in enumerate(q['cards'], 1):
+            with st.container(border=True):
+                show_group(c, pos)
 elif st.toggle('Reading view · Cards only', key=f"reading_view_{s['id']}"):
     st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
     for q in s['questions']:
         st.divider()
-        st.subheader(f"{q['id']}. {question_title(q)}")
+        if question_title(q):
+            st.subheader(question_title(q))
         if q['parent']: st.caption(f"Follow-up to question {q['parent']}")
         for pos,c in enumerate(q['cards'], 1):
             with st.container(border=True):
@@ -286,7 +292,9 @@ else:
             st.caption('Add unused piles without reshuffling or repeating cards.')
             if st.button('Add remaining piles'): action(add_other_piles,s)
     for q in s['questions']:
-        qid=q['id']; st.divider(); st.subheader(f"{qid}. {question_title(q)}")
+        qid=q['id']; st.divider()
+        if question_title(q):
+            st.subheader(question_title(q))
         if q['parent']: st.caption(f"Follow-up to question {q['parent']}")
         left=q['count']-len(q['cards'])
         if left and not s['closed']:
@@ -305,13 +313,13 @@ else:
     if not s['closed'] and s['remaining'] and not pending(s):
         with st.expander('+ Ask a follow-up question'):
             with st.form('followup',clear_on_submit=True):
-                parent=st.selectbox('Related to',[q['id'] for q in s['questions']],format_func=lambda i:f"{i}. {question_title(s['questions'][i-1])}")
+                parent=st.selectbox('Related to',[q['id'] for q in s['questions']],format_func=lambda i:question_title(s['questions'][i-1]) or f"Spread {i}")
                 question=st.text_area('Follow-up question (optional)')
                 count=st.number_input('Main cards',1,min(10,len(s['remaining'])),min(3,len(s['remaining'])),step=1)
                 if st.form_submit_button('Add question'): action(add_question,s,question,count,parent)
 if s is not None and s['selected_pile'] is not None:
     st.divider()
-    if not s['closed']:
+    if s.get('mode') != 'quick' and not s['closed']:
         with st.expander('Add a question or topic (optional)'):
             with st.form(f"topic_{s['id']}"):
                 topic = st.text_input('Your question', value=s['questions'][0]['question'])
@@ -331,7 +339,7 @@ if s is not None and s['selected_pile'] is not None:
 if st.session_state.history:
     with st.expander('History for this visit'):
         for h in reversed(st.session_state.history):
-            st.download_button(question_title(h['questions'][0]) + ' · ' + h['created_utc'][:16].replace('T',' '),json.dumps(h,indent=2,ensure_ascii=False),file_name=f"tarot_{h['id'][:8]}.json",mime='application/json',key=f"hist{h['id']}")
+            st.download_button(' · '.join(filter(None, (question_title(h['questions'][0]), h['created_utc'][:16].replace('T',' ')))),json.dumps(h,indent=2,ensure_ascii=False),file_name=f"tarot_{h['id'][:8]}.json",mime='application/json',key=f"hist{h['id']}")
 st.caption('Python secrets · Fisher–Yates · No AI in card selection. Readings are symbolic. Session history is temporary; export before leaving.')
 
 st.caption("Card artwork: Pamela Colman Smith, Rider–Waite–Smith (1909–1910), [Wikimedia Commons · historical scans](https://commons.wikimedia.org/wiki/Category:Rider-Waite-Smith_tarot_deck_(TaionWC)). Tap a card to view its original scan.")
