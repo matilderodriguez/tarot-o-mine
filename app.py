@@ -81,6 +81,16 @@ h1,h2,h3 {color:#F5D32F!important}
 [data-testid="stButton"] button,[data-testid="stDownloadButton"] button {border-radius:10px}
 [data-testid="stTextArea"] textarea,[data-testid="stTextInput"] input {color:#FFF3DB!important}
 [data-testid="stTextArea"] textarea::placeholder,[data-testid="stTextInput"] input::placeholder {color:#D9C7E5!important;opacity:1}
+
+.tarot-spread {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px;padding:8px 0 14px;align-items:start}
+.tarot-tile {min-width:0;text-align:center;margin:0 auto;width:100%;max-width:205px;overflow-wrap:anywhere}
+.tarot-role {color:#D9C7E5;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.tarot-face {display:block;width:100%;aspect-ratio: .58;object-fit:contain;border:1px solid #B69A48;border-radius:8px;box-shadow:0 5px 16px #0008;background:#38204F;box-sizing:border-box}
+.tarot-face.reversed {transform:rotate(180deg)}
+.tarot-title {color:#F5D32F;font-size:.96rem;font-weight:650;margin:8px 0 2px;line-height:1.3}
+.tarot-note {color:#D9C7E5;font-size:.78rem;line-height:1.4}
+.tarot-back {width:100%;aspect-ratio:.58;background:repeating-linear-gradient(45deg,#38204F 0px,#38204F 12px,#48265E 12px,#48265E 24px);border:2px solid #F5D32F;border-radius:8px;display:grid;place-items:center;box-shadow:inset 0 0 0 6px #38204F,inset 0 0 0 8px #A92D36,0 5px 16px #0008;color:#F5D32F;font-size:3rem;box-sizing:border-box}
+@media(min-width:650px){.tarot-spread{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}}
 </style>''',unsafe_allow_html=True)
 import base64
 # Approved wordmark embedded as a PNG, not a font file.
@@ -95,6 +105,46 @@ def action(fn,*args):
     else: st.rerun()
 
 def name(c): return c['card']+(' · Reversed' if c['orientation']=='Reversed' else '')
+
+
+# The card names are mapped to one verified, consistent historical deck.
+from hashlib import md5
+from urllib.parse import quote
+from html import escape
+
+CARD_FILES = {card: f"RWS Tarot {i:02d} {card.removeprefix('The ')}.jpg" for i, card in enumerate(MAJORS)}
+for suit, prefix in [('Wands','Wands'),('Cups','Cups'),('Swords','Swords'),('Pentacles','Pents')]:
+    for i, rank in enumerate(['Ace', *map(str, range(2,11)), 'Page','Knight','Queen','King'], 1):
+        CARD_FILES[f'{rank} of {suit}'] = f'{prefix}{i:02d}.jpg'
+
+def artwork_url(card_name):
+    filename = CARD_FILES[card_name].replace(' ', '_')
+    digest = md5(filename.encode('utf-8')).hexdigest()
+    return f'https://upload.wikimedia.org/wikipedia/commons/{digest[0]}/{digest[:2]}/{quote(filename)}'
+
+def tile(card, role):
+    title = escape(card['card'])
+    url = escape(artwork_url(card['card']), quote=True)
+    reverse = card['orientation'] == 'Reversed'
+    orientation = 'Reversed' if reverse else 'Upright'
+    rotation = ' reversed' if reverse else ''
+    note = escape(card.get('question', ''))
+    # A tap opens the original scan; the preview itself respects orientation.
+    return (f'<div class="tarot-tile"><div class="tarot-role">{escape(role)}</div>'
+            f'<a href="{url}" target="_blank" rel="noopener noreferrer" title="Open full-size artwork">'
+            f'<img class="tarot-face{rotation}" src="{url}" alt="{title}" loading="lazy" referrerpolicy="no-referrer"></a>'
+            f'<div class="tarot-title">{title}</div><div class="tarot-note">{orientation}</div>'
+            f'<div class="tarot-note">{note}</div></div>')
+
+def show_group(card, pos):
+    tiles = [tile(card, f'Main card {pos}')]
+    tiles += [tile(cl, f'Clarifier {j}') for j, cl in enumerate(card['clarifiers'], 1)]
+    st.markdown('<div class="tarot-spread">' + ''.join(tiles) + '</div>', unsafe_allow_html=True)
+
+def show_backs(count, start):
+    tiles = [f'<div class="tarot-tile"><div class="tarot-role">Main card {i}</div><div class="tarot-back" aria-label="Face-down card">✦</div><div class="tarot-note">Unrevealed</div></div>' for i in range(start, start+count)]
+    if tiles:
+        st.markdown('<div class="tarot-spread">' + ''.join(tiles) + '</div>', unsafe_allow_html=True)
 
 s=st.session_state.reading
 if s is None:
@@ -112,6 +162,15 @@ elif s['selected_pile'] is None:
     st.subheader('Choose a pile')
     for i,n in enumerate(s['pile_sizes']):
         if st.button(f'▥ Pile {i+1} · {n} cards',key=f'pile{i}',use_container_width=True): action(select_pile,s,i)
+elif st.toggle('Reading view · Cards only', key=f"reading_view_{s['id']}"):
+    for q in s['questions']:
+        st.divider()
+        st.subheader(f"{q['id']}. {q['question']}")
+        if q['parent']: st.caption(f"Follow-up to question {q['parent']}")
+        for pos,c in enumerate(q['cards'], 1):
+            with st.container(border=True):
+                show_group(c, pos)
+        show_backs(q['count']-len(q['cards']), len(q['cards'])+1)
 else:
     a,b=st.columns(2); a.metric('Cards available',len(s['remaining'])); b.metric('Cards drawn',sum(x['action'] in ('main','clarifier') for x in s['log']))
     st.caption(f"Selected pile: {s['selected_pile']} · {'Closed' if s['closed'] else 'Open session'}")
@@ -131,13 +190,11 @@ else:
                 st.rerun()
         for pos,c in enumerate(q['cards'],1):
             with st.container(border=True):
-                st.caption(f'Main card {pos}'); st.markdown(f"### {name(c)}")
-                for j,cl in enumerate(c['clarifiers'],1):
-                    st.markdown(f'**Clarifier {j}:** {name(cl)}')
-                    if cl.get('question'): st.caption(cl['question'])
+                show_group(c, pos)
                 if not s['closed']:
                     note=st.text_input('Clarifier question (optional)',key=f"note{qid}-{pos}-{len(c['clarifiers'])}")
                     if st.button('+ Add clarifier',key=f'clar{qid}-{pos}',disabled=len(s['remaining'])<=pending(s),use_container_width=True): action(clarify,s,qid,pos,note)
+        show_backs(left, len(q['cards'])+1)
     if not s['closed'] and s['remaining'] and not pending(s):
         with st.expander('+ Ask a follow-up question'):
             with st.form('followup',clear_on_submit=True):
@@ -161,3 +218,5 @@ if st.session_state.history:
         for h in reversed(st.session_state.history):
             st.download_button(h['questions'][0]['question'],json.dumps(h,indent=2,ensure_ascii=False),file_name=f"tarot_{h['id'][:8]}.json",mime='application/json',key=f"hist{h['id']}")
 st.caption('Python secrets · Fisher–Yates · No AI in card selection. Readings are symbolic. Session history is temporary; export before leaving.')
+
+st.caption("Card artwork: Pamela Colman Smith, Rider–Waite–Smith (1909–1910), [Wikimedia Commons · historical scans](https://commons.wikimedia.org/wiki/Category:Rider-Waite-Smith_tarot_deck_(TaionWC)). Tap a card to view its original scan.")
