@@ -1,56 +1,50 @@
-✦ Tarot o’ Mine
+# ✦ Tarot o’ Mine
 
-Your questions. Your cards. Your intuition.
+*Your questions. Your cards. Your intuition.*
 
-A personal digital tarot experience combining traditional Rider–Waite symbolism with cryptographically secure randomness and an interactive reading environment.
+A personal digital tarot experience combining
+traditional Rider–Waite symbolism with
+cryptographically secure randomness.
 
-About
+## About
 
-Tarot o’ Mine recreates the experience of working with a physical tarot deck while offering the flexibility of a modern web application.
+An independent Python-powered tarot application
+designed for intuitive and flexible readings.
 
-Every reading is generated independently through Python, without artificial intelligence influencing card selection.
+## Built with
 
-Built with
+- Python
+- Streamlit
+- Cryptographic randomness (secrets)
+- Fisher–Yates shuffle
+- Streamlit Community Cloud
 
-* Python
-* Streamlit
-* Cryptographic randomness (secrets)
-* Fisher–Yates shuffle algorithm
-* GitHub
-* Streamlit Community Cloud
+## Features
 
-Features
+- Complete 78-card Rider–Waite deck
+- Major and Minor Arcana modes
+- Customisable card selection
+- Manual or random pile selection
+- Optional reversed cards
+- Individual card revelation
+- Multiple clarifiers
+- Follow-up questions
+- Continuous deck state
+- JSON session export
+- Dark interface with antique gold accents
 
-* Complete 78-card Rider–Waite deck
-* Major and Minor Arcana modes
-* Customisable number of main cards
-* Manual or random pile selection
-* Optional reversed cards
-* Individual card revelation
-* Multiple clarifiers per card
-* Follow-up questions within the same reading
-* Continuous deck state without duplicate cards
-* JSON session export for AI-assisted interpretation
-* Elegant dark interface with antique gold accents
+## Randomness & Integrity
 
-Randomness & Integrity
+No AI-generated card selections.
+No predetermined outcomes.
+No duplicate cards within a session.
 
-Every shuffle uses Python’s cryptographically secure randomness.
+## Live Application
 
-Cards are drawn without replacement, and the deck remains consistent throughout each reading session.
+[Launch Tarot o’ Mine](https://tarot-o-mine.streamlit.app/)
 
-No AI-generated card selections. No predetermined outcomes.
+---
 
-Design Philosophy
-
-The application separates card extraction from interpretation, preserving the independence of the random process while allowing complete freedom in symbolic exploration.
-
-Live Application
-
-https://tarot-o-mine.streamlit.app/
-
-⸻
-
-Shuffle. Reveal. Explore.
+*Shuffle. Reveal. Explore.*
 
 © 2026 Tarot o’ Mine
