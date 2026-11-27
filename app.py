@@ -197,10 +197,11 @@ def start_quick(kind, count, clarifiers):
         previous['closed'] = True
         st.session_state.history.append(export_session(previous))
     st.session_state.reading = fresh
+    st.session_state.scroll_to_quick_result = True
 
 
 s = st.session_state.reading
-quick_result = st.container() if s is not None and s.get('mode') == 'quick' else None
+quick_result = st.container(key='quick_result') if s is not None and s.get('mode') == 'quick' else None
 
 with st.container(key='quick_reading'):
     st.subheader('Quick Reading', anchor=False)
@@ -244,6 +245,23 @@ elif s['selected_pile'] is None:
 elif quick_result is not None:
     with quick_result:
         st.subheader('Your Quick Reading', anchor=False)
+        if st.session_state.pop('scroll_to_quick_result', False):
+            st.html(
+                """<script>
+                requestAnimationFrame(() => {
+                    const heading = document.querySelector('.st-key-quick_result h3');
+                    if (!heading) return;
+                    heading.tabIndex = -1;
+                    heading.focus({ preventScroll: true });
+                    heading.scrollIntoView({
+                        block: 'start',
+                        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+                            ? 'instant' : 'smooth'
+                    });
+                });
+                </script>""",
+                unsafe_allow_javascript=True,
+            )
         st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
         for q in s['questions']:
             for pos,c in enumerate(q['cards'], 1):
