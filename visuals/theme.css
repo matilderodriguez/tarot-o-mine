@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Crimson+Text:ital,wght@1,400&family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@1,400&family=DM+Sans:wght@400;500;700&family=Instrument+Sans:wght@600&display=swap');
 
 :root {
     --ink: #140b17;
@@ -7,7 +7,7 @@
     --muted: #dec8a4;
     --outline: #815080;
     --body: 'DM Sans', system-ui, sans-serif;
-    --heading: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    --heading: 'Instrument Sans', var(--body);
     --display: 'Corvinus Skyline ICG', 'Arial Narrow', Georgia, serif;
     --paper: radial-gradient(ellipse at 50% 25%, #ffe296, transparent 72%),
         repeating-linear-gradient(120deg, #7138070c 0 1px, transparent 1px 4px),
@@ -27,11 +27,10 @@
 .stApp :is(h1, h2, h3) {
     color: var(--gold);
     font-family: var(--heading);
-    font-weight: 700;
-    line-height: 1.1;
-    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 1.17;
 }
-.stApp h3 { font-size: clamp(2rem, 6.5vw, 3rem); }
+.stApp h3 { font-size: clamp(1.85rem, 6vw, 2.7rem); }
 .stApp :is(p, label, input, textarea, button, summary) { font-family: var(--body); }
 .stApp :is(input, textarea) { font-size: 1rem; }
 .stApp [data-testid="stWidgetLabel"] p { font-size: 1rem; }
@@ -74,7 +73,11 @@
     z-index: -1;
 }
 .st-key-tarot_brand h1,
-.st-key-quick_reading h3 { font-family: var(--display); font-weight: 400; }
+.st-key-quick_reading h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    text-transform: uppercase;
+}
 
 .st-key-tarot_brand h1 {
     padding: .13em .14em .12em;
