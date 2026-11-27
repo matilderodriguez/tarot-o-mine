@@ -33,6 +33,9 @@
 .stApp h3 { font-size: clamp(1.55rem, 5.5vw, 2.45rem); }
 .stApp :is(p, label, input, textarea, button, summary) { font-family: var(--body); }
 .stApp :is(input, textarea) { font-size: 1rem; }
+.stApp [data-testid="stWidgetLabel"] p,
+.stApp [data-testid="stRadio"] label p,
+.stApp [data-testid="stCheckbox"] label p { color: var(--cream); }
 .stApp [data-testid="stCaptionContainer"] { opacity: 1; }
 .stApp [data-testid="stCaptionContainer"] p {
     color: var(--muted) !important;
@@ -43,7 +46,14 @@
     background-color: #321638;
     border-color: var(--outline);
 }
+.stApp :is([data-testid="stTextArea"], [data-testid="stTextInput"]) :is(input, textarea) {
+    background-color: #321638;
+    color: var(--cream);
+}
 .stApp :is(input, textarea)::placeholder { color: var(--muted); opacity: 1; }
+
+.st-key-tarot_brand,
+.st-key-quick_reading { container-type: inline-size; }
 
 .st-key-tarot_brand [data-testid="stHeading"] {
     position: relative;
@@ -62,8 +72,8 @@
     z-index: -1;
 }
 .st-key-tarot_brand h1 {
-    padding: .2em .14em 0;
-    font-size: clamp(2rem, 9.2vw, 5.1rem);
+    padding: .21em .14em .16em;
+    font-size: clamp(1.65rem, 11.6cqw, 5.1rem);
     white-space: nowrap;
     text-align: center;
     text-shadow: 1px 2px #9c2d29, 3px 4px #220c1b;
@@ -71,7 +81,9 @@
 .st-key-tarot_brand h1::after {
     content: '✦';
     display: block;
-    margin: .16em 0 .55em;
+    margin: .14em 0 .18em;
+    line-height: 1;
+    text-shadow: 1px 1px #9c2d29;
     font-size: .32em;
 }
 .st-key-tarot_brand [data-testid="stCaptionContainer"] p,
@@ -93,37 +105,35 @@
 }
 
 .st-key-quick_reading [data-testid="stHeading"] {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 5.1;
-    background: var(--quick-banner) center / 100% 100% no-repeat;
+    position: relative;
+    aspect-ratio: 5.43;
+    background: var(--quick-banner) center / contain no-repeat;
 }
 .st-key-quick_reading h3 {
-    padding: 0 0 4%;
-    font-size: clamp(1.15rem, 5.4vw, 2.65rem);
+    position: absolute;
+    top: 35%;
+    inset-inline: 22%;
+    transform: translateY(-50%);
+    padding: 0;
+    font-size: clamp(.95rem, 6.45cqw, 2.75rem);
+    line-height: 1;
     color: #201009;
     text-align: center;
+    white-space: nowrap;
 }
 .st-key-quick_choices {
-    padding: 1.8rem .35rem .75rem;
+    padding: 1rem .35rem .65rem;
     position: relative;
     isolation: isolate;
 }
-.st-key-quick_choices::before,
-.st-key-quick_choices::after {
+.st-key-quick_choices::before {
     content: '';
     position: absolute;
     z-index: -1;
-    top: 50%;
-    left: 50%;
-    width: min(63%, 23rem);
-    aspect-ratio: 1;
-    border: 8px double #824d8e66;
-    border-radius: 34% 65% 34% 65%;
-    box-shadow: 0 0 0 5px #824d8e38, inset 0 0 0 6px #824d8e38;
-    transform: translate(-50%, -50%) rotate(45deg);
+    inset: -2.8rem 2% -2rem;
+    pointer-events: none;
+    background: var(--quick-knot) center / contain no-repeat;
 }
-.st-key-quick_choices::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
 .stApp :is([data-testid="stButton"], [data-testid="stDownloadButton"], [data-testid="stFormSubmitButton"]) button {
     min-height: 2.75rem;
@@ -157,7 +167,7 @@
 }
 .stApp .st-key-quick_choices [data-testid="stButton"] button {
     min-height: clamp(3.65rem, 11vw, 5.4rem);
-    padding: .5rem 1.7rem;
+    padding: .65rem 1.7rem .4rem;
     border: 2px solid #f5ba46;
     border-radius: 1rem;
     box-shadow: inset 0 0 0 3px #793227, inset 0 0 0 5px #e8a843, 0 4px 12px #0009;
@@ -180,38 +190,38 @@
 }
 .st-key-quick_choices button::before,
 .st-key-quick_choices button::after {
-    content: '✦';
+    content: '';
     position: absolute;
-    color: #761b31;
-    font-size: clamp(.95rem, 3vw, 1.65rem);
+    width: clamp(.65rem, 2.4cqw, 1.2rem);
+    aspect-ratio: 1;
+    background: #761b31;
+    clip-path: polygon(50% 0, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0 50%, 37% 37%);
     pointer-events: none;
 }
 .st-key-quick_choices button::before { left: 3%; }
 .st-key-quick_choices button::after { right: 3%; }
 .st-key-quick_choices button p {
-    font: 400 clamp(1.12rem, 5.25vw, 2.35rem)/1.15 var(--display);
+    font: 400 clamp(1rem, 6cqw, 2.35rem)/1.15 var(--display);
     text-align: center;
     text-transform: uppercase;
 }
 
-.st-key-quick_reading hr {
-    position: relative;
-    border: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #a92646 15% 85%, transparent);
-    margin-block: .8rem;
-}
-.st-key-quick_reading hr::after {
-    content: '✦';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    padding-inline: .4em;
-    transform: translate(-50%, -50%);
+.tarot-divider {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
     color: var(--gold);
-    background: #211124;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 1;
 }
+.tarot-divider::before,
+.tarot-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #a92646);
+}
+.tarot-divider::after { transform: scaleX(-1); }
 
 .tarot-spread { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; padding: 8px 0 14px; align-items: start; }
 .tarot-tile { min-width: 0; text-align: center; margin: 0 auto; width: 100%; max-width: 205px; overflow-wrap: anywhere; }
@@ -226,5 +236,13 @@
     .tarot-spread { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
 }
 @media (max-width: 600px) {
-    .block-container { padding-inline: 1rem; }
+    .block-container { padding-inline: 1rem; padding-top: 2.8rem; }
+    .st-key-quick_choices [data-testid="stButton"] { margin-top: .9rem; }
+    .stApp .st-key-quick_choices [data-testid="stButton"] button { min-height: 3.25rem; }
+    .st-key-tarot_brand [data-testid="stVerticalBlock"],
+    .st-key-quick_reading [data-testid="stVerticalBlock"] { gap: .65rem; }
+    .st-key-tarot_brand [data-testid="stCaptionContainer"] p,
+    .st-key-quick_reading [data-testid="stCaptionContainer"] p {
+        font-size: clamp(.875rem, 3.7cqw, 1.1rem);
+    }
 }

@@ -122,9 +122,11 @@ visuals = Path(__file__).parent / 'visuals'
 theme = (visuals / 'theme.css').read_text(encoding='utf-8')
 skull = base64.b64encode((visuals / 'skull-medallion.webp').read_bytes()).decode('ascii')
 banner = base64.b64encode((visuals / 'quick-banner.webp').read_bytes()).decode('ascii')
+knot = base64.b64encode((visuals / 'quick-knot.webp').read_bytes()).decode('ascii')
 st.markdown(
     f'<style>{theme}:root{{--skull:url("data:image/webp;base64,{skull}");'
-    f'--quick-banner:url("data:image/webp;base64,{banner}");}}</style>',
+    f'--quick-banner:url("data:image/webp;base64,{banner}");'
+    f'--quick-knot:url("data:image/webp;base64,{knot}");}}</style>',
     unsafe_allow_html=True,
 )
 with st.container(key='tarot_brand'):
@@ -205,7 +207,10 @@ with st.container(key='quick_reading'):
         if st.button('Full Deck · 5 + 10', key='quick_five', type='primary', use_container_width=True):
             start_quick('Full Deck', 5, 2)
     st.caption('Each tap starts a fresh deck. Previous revealed readings are saved in this visit’s history.')
-    st.divider()
+    st.markdown(
+        '<div class="tarot-divider" aria-hidden="true"><span>✦</span></div>',
+        unsafe_allow_html=True,
+    )
 
 s=st.session_state.reading
 if s is None:
