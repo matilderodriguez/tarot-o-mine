@@ -1,101 +1,216 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Girassol&display=swap');
 
 :root {
-    --ink: #100d15;
-    --cream: #f4e9d7;
-    --gold: #e7c779;
-    --muted: #cbbdd4;
-    --outline: #766342;
-    --body: 'DM Sans', system-ui, sans-serif;
-    --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+    --ink: #140b17;
+    --cream: #f7e6c4;
+    --gold: #ffcc57;
+    --muted: #dec8a4;
+    --outline: #815080;
+    --body: 'Crimson Text', Georgia, serif;
+    --display: 'Girassol', 'Barlow Condensed', Georgia, serif;
+    --paper: radial-gradient(ellipse at 50% 25%, #ffe296, transparent 72%),
+        repeating-linear-gradient(120deg, #7138070c 0 1px, transparent 1px 4px),
+        linear-gradient(175deg, #f6cb68, #e8a837 55%, #d79028);
 }
+
 .stApp {
-    background: radial-gradient(ellipse at 50% 0, #26182f 0, var(--ink) 38rem);
+    background: radial-gradient(ellipse at 50% 30%, #26122a 0, transparent 42rem),
+        repeating-linear-gradient(115deg, #7f548008 0 1px, transparent 1px 4px),
+        #100911;
     color: var(--cream);
     font-family: var(--body);
 }
+
 [data-testid="stHeader"] { background: transparent; }
-.block-container { max-width: 52rem; padding-top: 2.75rem; }
+.block-container { max-width: 46rem; padding-top: 3.5rem; }
 .stApp :is(h1, h2, h3) {
     color: var(--gold);
     font-family: var(--display);
-    font-weight: 700;
-    letter-spacing: .025em;
+    font-weight: 400;
     line-height: 1.1;
+    text-transform: uppercase;
 }
-.stApp h3 { font-size: clamp(1.8rem, 6vw, 2.45rem); }
+.stApp h3 { font-size: clamp(1.55rem, 5.5vw, 2.45rem); }
 .stApp :is(p, label, input, textarea, button, summary) { font-family: var(--body); }
 .stApp :is(input, textarea) { font-size: 1rem; }
 .stApp [data-testid="stCaptionContainer"] { opacity: 1; }
 .stApp [data-testid="stCaptionContainer"] p {
     color: var(--muted) !important;
-    font-size: .875rem;
-    line-height: 1.5;
+    font-size: clamp(1rem, 3.35vw, 1.28rem);
+    line-height: 1.25;
 }
-.stApp :is([data-testid="stTextArea"], [data-testid="stTextInput"]) :is(input, textarea)::placeholder {
-    color: var(--muted);
-    opacity: 1;
+.stApp :is([data-testid="stTextArea"], [data-testid="stTextInput"]) [data-baseweb] {
+    background-color: #321638;
+    border-color: var(--outline);
 }
-.stApp [data-testid="stImage"] img { object-fit: contain; }
-.st-key-tarot_brand [data-testid="stElementContainer"]:has([data-testid="stImage"]) {
-    align-self: center;
-    max-width: 100%;
+.stApp :is(input, textarea)::placeholder { color: var(--muted); opacity: 1; }
+
+.st-key-tarot_brand [data-testid="stHeading"] {
+    position: relative;
+    margin-inline: 7%;
+    background: #ebaa36;
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+    isolation: isolate;
 }
-.st-key-tarot_brand [data-testid="stCaptionContainer"] { text-align: center; }
+.st-key-tarot_brand [data-testid="stHeading"]::before {
+    content: '';
+    position: absolute;
+    inset: 2px 3px;
+    background: radial-gradient(ellipse at center, #622063, #310e39 90%);
+    box-shadow: inset 0 0 0 4px #2c1028, inset 0 0 0 6px #88193c;
+    clip-path: inherit;
+    z-index: -1;
+}
+.st-key-tarot_brand h1 {
+    padding: .2em .14em 0;
+    font-size: clamp(2rem, 9.2vw, 5.1rem);
+    white-space: nowrap;
+    text-align: center;
+    text-shadow: 1px 2px #9c2d29, 3px 4px #220c1b;
+}
+.st-key-tarot_brand h1::after {
+    content: '✦';
+    display: block;
+    margin: .16em 0 .55em;
+    font-size: .32em;
+}
+.st-key-tarot_brand [data-testid="stCaptionContainer"] p,
+.st-key-quick_reading [data-testid="stCaptionContainer"] p {
+    text-align: center;
+    font-style: italic;
+}
+.st-key-tarot_brand [data-testid="stCaptionContainer"] p {
+    display: flex;
+    align-items: center;
+    gap: .6em;
+}
+.st-key-tarot_brand [data-testid="stCaptionContainer"] p::before,
+.st-key-tarot_brand [data-testid="stCaptionContainer"] p::after {
+    content: '';
+    flex: 1 1 1em;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #af2946, transparent);
+}
+
+.st-key-quick_reading [data-testid="stHeading"] {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 5.1;
+    background: var(--quick-banner) center / 100% 100% no-repeat;
+}
+.st-key-quick_reading h3 {
+    padding: 0 0 4%;
+    font-size: clamp(1.15rem, 5.4vw, 2.65rem);
+    color: #201009;
+    text-align: center;
+}
+.st-key-quick_choices {
+    padding: 1.8rem .35rem .75rem;
+    position: relative;
+    isolation: isolate;
+}
+.st-key-quick_choices::before,
+.st-key-quick_choices::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: min(63%, 23rem);
+    aspect-ratio: 1;
+    border: 8px double #824d8e66;
+    border-radius: 34% 65% 34% 65%;
+    box-shadow: 0 0 0 5px #824d8e38, inset 0 0 0 6px #824d8e38;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.st-key-quick_choices::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
 .stApp :is([data-testid="stButton"], [data-testid="stDownloadButton"], [data-testid="stFormSubmitButton"]) button {
     min-height: 2.75rem;
     border: 1px solid var(--outline);
-    border-radius: 4px;
+    border-radius: .5rem;
     color: var(--cream);
-    background: #201729;
+    background: #29152e;
 }
 .stApp :is([data-testid="stButton"], [data-testid="stDownloadButton"], [data-testid="stFormSubmitButton"]) button:hover:not(:disabled) {
     border-color: var(--gold);
     color: var(--gold);
 }
 .stApp button:is([kind="primary"], [kind="primaryFormSubmit"], [data-testid="stBaseButton-primary"]):not(:disabled) {
-    color: #1c1420;
-    background: #dcc080;
+    color: #261309;
+    background: var(--paper);
+    border-color: #f0b847;
 }
 .stApp button:is([kind="primary"], [kind="primaryFormSubmit"], [data-testid="stBaseButton-primary"]):hover:not(:disabled) {
-    color: #1c1420;
-    background: #f0d694;
+    color: #190b05;
+    background-color: #ffe395;
+    filter: brightness(1.12);
 }
 .stApp button:focus-visible {
-    outline: 2px solid #f6d798;
-    outline-offset: 3px;
+    outline: 2px solid #ffe399;
+    outline-offset: 4px;
 }
 
-.st-key-quick_major_art { --quick-art: var(--longhair); --panel: #352044; }
-.st-key-quick_full_art { --quick-art: var(--bandana); --panel: #30203f; }
-.st-key-quick_five_art { --quick-art: var(--tophat); --panel: #3a2346; }
-.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) [data-testid="stButton"] button {
-    justify-content: flex-start;
-    text-align: left;
-    min-height: 6.5rem;
-    padding: .9rem 1rem .9rem 7.2rem;
-    color: var(--cream);
-    background: var(--quick-art) left .35rem center / 6.25rem auto no-repeat,
-        repeating-linear-gradient(117deg, transparent 0 3px, #f2d08e07 3px 4px),
-        linear-gradient(105deg, #120e18, var(--panel));
-    border: 1px solid var(--outline);
+.st-key-quick_choices [data-testid="stButton"] {
+    margin-top: 1.1rem;
+    position: relative;
 }
-.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) [data-testid="stButton"] button:hover {
-    color: #ffdfa0;
-    background: var(--quick-art) left .35rem center / 6.25rem auto no-repeat,
-        repeating-linear-gradient(117deg, transparent 0 3px, #f2d08e0b 3px 4px),
-        linear-gradient(105deg, #1b1422, var(--panel));
-    border-color: var(--gold);
+.stApp .st-key-quick_choices [data-testid="stButton"] button {
+    min-height: clamp(3.65rem, 11vw, 5.4rem);
+    padding: .5rem 1.7rem;
+    border: 2px solid #f5ba46;
+    border-radius: 1rem;
+    box-shadow: inset 0 0 0 3px #793227, inset 0 0 0 5px #e8a843, 0 4px 12px #0009;
+    position: relative;
 }
-.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) button > span {
-    justify-content: flex-start;
+.st-key-quick_choices [data-testid="stButton"]::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    width: clamp(2rem, 7vw, 3.25rem);
+    aspect-ratio: 1;
+    transform: translate(-50%, -52%);
+    border: 2px solid #e8b751;
+    border-radius: 50%;
+    background: var(--skull) center / 100% no-repeat, #29151f;
+    box-shadow: 0 0 0 2px #381826;
 }
-.stApp :is(.st-key-quick_major_art, .st-key-quick_full_art, .st-key-quick_five_art) button p {
-    font: 700 clamp(1.25rem, 4.8vw, 1.75rem)/1.15 var(--display);
-    letter-spacing: .025em;
-    overflow-wrap: anywhere;
-    text-align: left;
+.st-key-quick_choices button::before,
+.st-key-quick_choices button::after {
+    content: '✦';
+    position: absolute;
+    color: #761b31;
+    font-size: clamp(.95rem, 3vw, 1.65rem);
+    pointer-events: none;
+}
+.st-key-quick_choices button::before { left: 3%; }
+.st-key-quick_choices button::after { right: 3%; }
+.st-key-quick_choices button p {
+    font: 400 clamp(1.12rem, 5.25vw, 2.35rem)/1.15 var(--display);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.st-key-quick_reading hr {
+    position: relative;
+    border: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #a92646 15% 85%, transparent);
+    margin-block: .8rem;
+}
+.st-key-quick_reading hr::after {
+    content: '✦';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    padding-inline: .4em;
+    transform: translate(-50%, -50%);
+    color: var(--gold);
+    background: #211124;
+    font-size: 1.5rem;
 }
 
 .tarot-spread { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; padding: 8px 0 14px; align-items: start; }
