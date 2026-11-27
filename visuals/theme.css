@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Girassol&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
 :root {
     --ink: #140b17;
@@ -7,7 +7,7 @@
     --muted: #dec8a4;
     --outline: #815080;
     --body: 'Crimson Text', Georgia, serif;
-    --display: 'Girassol', 'Barlow Condensed', Georgia, serif;
+    --display: 'Corvinus Skyline ICG', 'Arial Narrow', Georgia, serif;
     --paper: radial-gradient(ellipse at 50% 25%, #ffe296, transparent 72%),
         repeating-linear-gradient(120deg, #7138070c 0 1px, transparent 1px 4px),
         linear-gradient(175deg, #f6cb68, #e8a837 55%, #d79028);
@@ -30,7 +30,7 @@
     line-height: 1.1;
     text-transform: uppercase;
 }
-.stApp h3 { font-size: clamp(1.55rem, 5.5vw, 2.45rem); }
+.stApp h3 { font-size: clamp(1.85rem, 7.4vw, 3.1rem); }
 .stApp :is(p, label, input, textarea, button, summary) { font-family: var(--body); }
 .stApp :is(input, textarea) { font-size: 1rem; }
 .stApp [data-testid="stWidgetLabel"] p,
@@ -72,8 +72,8 @@
     z-index: -1;
 }
 .st-key-tarot_brand h1 {
-    padding: .21em .14em .16em;
-    font-size: clamp(1.65rem, 11.6cqw, 5.1rem);
+    padding: .13em .14em .12em;
+    font-size: clamp(2rem, 16.2cqw, 7rem);
     white-space: nowrap;
     text-align: center;
     text-shadow: 1px 2px #9c2d29, 3px 4px #220c1b;
@@ -84,7 +84,8 @@
     margin: .14em 0 .18em;
     line-height: 1;
     text-shadow: 1px 1px #9c2d29;
-    font-size: .32em;
+    font-family: Georgia, serif;
+    font-size: .27em;
 }
 .st-key-tarot_brand [data-testid="stCaptionContainer"] p,
 .st-key-quick_reading [data-testid="stCaptionContainer"] p {
@@ -111,11 +112,11 @@
 }
 .st-key-quick_reading h3 {
     position: absolute;
-    top: 35%;
+    top: 36%;
     inset-inline: 22%;
     transform: translateY(-50%);
     padding: 0;
-    font-size: clamp(.95rem, 6.45cqw, 2.75rem);
+    font-size: clamp(1.2rem, 9.5cqw, 4.1rem);
     line-height: 1;
     color: #201009;
     text-align: center;
@@ -201,7 +202,7 @@
 .st-key-quick_choices button::before { left: 3%; }
 .st-key-quick_choices button::after { right: 3%; }
 .st-key-quick_choices button p {
-    font: 400 clamp(1rem, 6cqw, 2.35rem)/1.15 var(--display);
+    font: 400 clamp(1.35rem, 9.25cqw, 3.75rem)/1.15 var(--display);
     text-align: center;
     text-transform: uppercase;
 }

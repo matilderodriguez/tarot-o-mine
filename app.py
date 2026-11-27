@@ -123,8 +123,12 @@ theme = (visuals / 'theme.css').read_text(encoding='utf-8')
 skull = base64.b64encode((visuals / 'skull-medallion.webp').read_bytes()).decode('ascii')
 banner = base64.b64encode((visuals / 'quick-banner.webp').read_bytes()).decode('ascii')
 knot = base64.b64encode((visuals / 'quick-knot.webp').read_bytes()).decode('ascii')
+display_font = base64.b64encode((visuals / 'corvinus-skyline-icg.ttf').read_bytes()).decode('ascii')
 st.markdown(
-    f'<style>{theme}:root{{--skull:url("data:image/webp;base64,{skull}");'
+    f'<style>{theme} @font-face {{font-family:"Corvinus Skyline ICG";'
+    f'src:url("data:font/ttf;base64,{display_font}") format("truetype");'
+    f'font-weight:400;font-style:normal;font-display:swap;}}'
+    f':root:root{{--skull:url("data:image/webp;base64,{skull}");'
     f'--quick-banner:url("data:image/webp;base64,{banner}");'
     f'--quick-knot:url("data:image/webp;base64,{knot}");}}</style>',
     unsafe_allow_html=True,
