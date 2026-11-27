@@ -190,33 +190,42 @@ def start_quick(kind, count, clarifiers):
     try:
         fresh = quick_reading(kind, count, clarifiers)
     except ValueError as e:
-        st.error(str(e))
+        st.session_state.quick_error = str(e)
         return
     previous = st.session_state.reading
     if previous is not None and not previous['closed'] and any(q['cards'] for q in previous['questions']):
         previous['closed'] = True
         st.session_state.history.append(export_session(previous))
     st.session_state.reading = fresh
-    st.rerun()
 
+
+s = st.session_state.reading
+quick_result = st.container() if s is not None and s.get('mode') == 'quick' else None
 
 with st.container(key='quick_reading'):
     st.subheader('Quick Reading', anchor=False)
     st.caption('One tap · No question required · Upright cards')
     with st.container(key='quick_choices'):
-        if st.button('Major Arcana · 3 + 3', key='quick_major', type='primary', use_container_width=True):
-            start_quick('Major Arcana', 3, 1)
-        if st.button('Full Deck · 3 + 3', key='quick_full', type='primary', use_container_width=True):
-            start_quick('Full Deck', 3, 1)
-        if st.button('Full Deck · 5 + 10', key='quick_five', type='primary', use_container_width=True):
-            start_quick('Full Deck', 5, 2)
+        st.button(
+            'Major Arcana · 3 + 3', key='quick_major', type='primary', use_container_width=True,
+            on_click=start_quick, args=('Major Arcana', 3, 1),
+        )
+        st.button(
+            'Full Deck · 3 + 3', key='quick_full', type='primary', use_container_width=True,
+            on_click=start_quick, args=('Full Deck', 3, 1),
+        )
+        st.button(
+            'Full Deck · 5 + 10', key='quick_five', type='primary', use_container_width=True,
+            on_click=start_quick, args=('Full Deck', 5, 2),
+        )
+    if error := st.session_state.pop('quick_error', None):
+        st.error(error)
     st.caption('Each tap starts a fresh deck. Previous revealed readings are saved in this visit’s history.')
     st.markdown(
         '<div class="tarot-divider" aria-hidden="true"><span>✦</span></div>',
         unsafe_allow_html=True,
     )
 
-s=st.session_state.reading
 if s is None:
     st.subheader('Interactive Reading')
     question=st.text_area('Your question (optional)',placeholder='What would you like to explore?')
@@ -232,12 +241,14 @@ elif s['selected_pile'] is None:
     st.subheader('Choose a pile')
     for i,n in enumerate(s['pile_sizes']):
         if st.button(f'▥ Pile {i+1} · {n} cards',key=f'pile{i}',use_container_width=True): action(select_pile,s,i)
-elif s.get('mode') == 'quick':
-    st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
-    for q in s['questions']:
-        for pos,c in enumerate(q['cards'], 1):
-            with st.container(border=True):
-                show_group(c, pos)
+elif quick_result is not None:
+    with quick_result:
+        st.subheader('Your Quick Reading', anchor=False)
+        st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
+        for q in s['questions']:
+            for pos,c in enumerate(q['cards'], 1):
+                with st.container(border=True):
+                    show_group(c, pos)
 elif st.toggle('Reading view · Cards only', key=f"reading_view_{s['id']}"):
     st.caption(f"{s['deck']} · Pile {s['selected_pile']} · {s['pile_sizes'][s['selected_pile']-1]} cards in selected pile")
     for q in s['questions']:
